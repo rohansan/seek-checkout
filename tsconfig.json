@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es2018",
+    "allowJs": true,
+    "lib": ["es2018", "es2019", "es2020", "esnext"],
+    "baseUrl": "./",
+    "strictNullChecks": true,
+    "sourceMap": true
+  },
+  "include": [
+    "src/*.ts",
+    "tests/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
