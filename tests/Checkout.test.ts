@@ -1,5 +1,5 @@
-import {DiscountType, ICartItem, IPricingRules, IProduct} from "../src/interfaces";
-import {Checkout} from "../src/Checkout";
+import {DiscountType, ICartItem, IPricingRules, IProduct} from "../src/interfaces"
+import {Checkout} from "../src/Checkout"
 import {Big} from 'big.js'
 
 describe('Checkout', () => {
@@ -16,19 +16,38 @@ describe('Checkout', () => {
             }]
         }
         //when
-        const checkout = new Checkout(pricingRules);
-        checkout.add(item);
-        checkout.total();
+        const checkout = new Checkout(pricingRules)
+        checkout.add(item)
         //then
-        expect(checkout.total()).toEqual(Big(161.98));
-        expect(checkout.discount()).toEqual(Big(18.00));
-    });
+        expect(checkout.total()).toEqual(Big(161.98))
+        expect(checkout.discount()).toEqual(Big(18.00))
+    })
+
+    it('calculates 0 discount if product doesnt match', async () => {
+
+        //given
+        const product: IProduct = {id: 1, name: "Classic", price: Big(100)}
+        const item: ICartItem = {product: product, quantity: 1}
+        const pricingRules: IPricingRules = {
+            discounts: [{
+                discountType: DiscountType.PERCENTAGE,
+                percentageDiscount: 10,
+                productId: 2
+            }]
+        }
+        //when
+        const checkout = new Checkout(pricingRules)
+        checkout.add(item)
+        //then
+        expect(checkout.total()).toEqual(Big(100))
+        expect(checkout.discount()).toEqual(Big(0))
+    })
 
     it('calculates correct total & discount for a BUY_X_GET_Y_FREE discount scenario', async () => {
 
         //given
         const product: IProduct = {id: 1, name: "Classic", price: Big(100)}
-        const item: ICartItem = {product: product, quantity: 10}
+        const item: ICartItem = {product: product, quantity: 9}
         const pricingRules: IPricingRules = {
             discounts: [{
                 discountType: DiscountType.BUY_X_GET_Y_FREE,
@@ -38,14 +57,12 @@ describe('Checkout', () => {
             }]
         }
         //when
-        const checkout = new Checkout(pricingRules);
-        checkout.add(item);
-        checkout.total();
+        const checkout = new Checkout(pricingRules)
+        checkout.add(item)
         //then
-        expect(checkout.total()).toEqual(Big(600));
-        expect(checkout.discount()).toEqual(Big(400));
-
-    });
+        expect(checkout.total()).toEqual(Big(700))
+        expect(checkout.discount()).toEqual(Big(200))
+    })
 
     it('calculates 0 discount for a BUY_X_GET_Y_FREE scenario when quantity < X', async () => {
 
@@ -61,14 +78,12 @@ describe('Checkout', () => {
             }]
         }
         //when
-        const checkout = new Checkout(pricingRules);
-        checkout.add(item);
-        checkout.total();
+        const checkout = new Checkout(pricingRules)
+        checkout.add(item)
         //then
-        expect(checkout.total()).toEqual(Big(300));
-        expect(checkout.discount()).toEqual(Big(0));
-
-    });
+        expect(checkout.total()).toEqual(Big(300))
+        expect(checkout.discount()).toEqual(Big(0))
+    })
 
     it('calculates correct total & discount for a BUY_X_GET_Y_FREE & PERCENTAGE discount scenario', async () => {
 
@@ -92,17 +107,16 @@ describe('Checkout', () => {
             }]
         }
         //when
-        const checkout = new Checkout(pricingRules);
-        checkout.add(item1);
-        checkout.add(item2);
-        checkout.total();
+        const checkout = new Checkout(pricingRules)
+        checkout.add(item1)
+        checkout.add(item2)
 
         //then
         expect(checkout.total()).toEqual(Big(1100.66))
-        expect(checkout.discount()).toEqual(Big(572.28));
-    });
+        expect(checkout.discount()).toEqual(Big(572.28))
+    })
 
-    it('it updates quantity in cart item when existing item is added again', async () => {
+    it('it updates quantity in cart item when existing product is added again', async () => {
 
         //given
         const classicProduct: IProduct = {id: 1, name: "Classic", price: Big(269.99)}
@@ -111,14 +125,14 @@ describe('Checkout', () => {
         const pricingRules: IPricingRules = {
             discounts: []
         }
+        const checkout = new Checkout(pricingRules)
+        checkout.add(item1)
 
         //when
-        const checkout = new Checkout(pricingRules);
-        checkout.add(item1);
-        checkout.add(item2);
+        checkout.add(item2)
 
         //then
         expect(checkout.items.length).toEqual(1)
         expect(checkout.items[0].quantity).toEqual(2)
-    });
-});
+    })
+})

@@ -18,6 +18,7 @@ export interface IPricingRules {
 
 export enum DiscountType  {PERCENTAGE, BUY_X_GET_Y_FREE}
 
+// Assumption - Based on the discount type, either percentageDiscount or x,y values will be present
 export interface IDiscount {
     productId : number
     discountType : DiscountType
